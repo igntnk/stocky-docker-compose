@@ -1,0 +1,40 @@
+version: '3'
+services:
+
+  postgres:
+    image: docker.io/bitnami/postgresql:16.3.0-debian-12-r9
+    container_name: postgres
+    hostname: ${POSTGRES_HOSTNAME}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./postgres_init:/docker-entrypoint-initdb.d
+    networks:
+      - config-definition
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    hostname: ${MONGO_HOSTNAME}
+    ports:
+      - "${MONGO_PORT}:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_ROOT_DB}
+    networks:
+      - config-definition
+    volumes:
+      - ./mongo_data:/data/db
+      - ./mongo_init:/docker-entrypoint-initdb.d
+
+networks:
+  config-definition:
+    driver: bridge
+  user-interface:
+    driver: bridge
